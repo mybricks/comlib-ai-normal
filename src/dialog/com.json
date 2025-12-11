@@ -1,0 +1,81 @@
+{
+  "title": "AI对话记录",
+  "namespace": "mybricks.comlib-ai-normal.ai-conversation",
+  "version": "1.0.0",
+  "description": "显示AI对话记录",
+  "author": "MyBricks",
+  "author_name": "MyBricks",
+  "icon": "./icon.svg",
+  "data": "./data.json",
+  "runtime": "./runtime.tsx",
+  "editors": "./editors.ts",
+  "rtType": "react",
+  "inputs": [
+    {
+      "id": "setConversation",
+      "title": "设置对话记录",
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "role": {
+              "type": "string",
+              "description": "角色：user 或 assistant"
+            },
+            "content": {
+              "type": "string",
+              "description": "消息内容"
+            },
+            "timestamp": {
+              "type": "number",
+              "description": "时间戳"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "addMessage",
+      "title": "添加消息",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "description": "角色：user 或 assistant"
+          },
+          "content": {
+            "type": "string",
+            "description": "消息内容"
+          }
+        }
+      }
+    },
+    {
+      "id": "clear",
+      "title": "清空对话"
+    }
+  ],
+  "outputs": [
+    {
+      "id": "onMessageClick",
+      "title": "点击消息",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "index": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  ]
+}
+

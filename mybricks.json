@@ -1,0 +1,12 @@
+{
+  "namespace": "mybricks.comlib-ai-normal",
+  "content": "",
+  "commitInfo": "init",
+  "comAry": [
+    "./src/_llm/com.json",
+    "./src/dialog/com.json"
+  ],
+  "componentType": "PC",
+  "userName": "MyBricks",
+  "tags": "react"
+}

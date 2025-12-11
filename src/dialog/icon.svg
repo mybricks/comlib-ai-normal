@@ -1,0 +1,7 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 聊天气泡 -->
+  <path d="M20 2H4C2.9 2 2 2.9 2 4V16C2 17.1 2.9 18 4 18H8L12 22L16 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" stroke="#333" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+  <!-- AI 字母 - 黑色加粗突出 -->
+  <text x="12" y="13.5" font-family="Arial, sans-serif" font-size="10" font-weight="900" fill="#000" text-anchor="middle">AI</text>
+</svg>
+
