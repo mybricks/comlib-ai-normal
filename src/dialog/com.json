@@ -36,18 +36,32 @@
       }
     },
     {
-      "id": "addMessage",
-      "title": "添加消息",
+      "id": "addUserMessage",
+      "title": "添加用户消息",
+      "schema": {
+        "type": "string",
+        "description": "用户消息内容"
+      }
+    },
+    {
+      "id": "addAssistantMessage",
+      "title": "添加AI消息",
+      "schema": {
+        "type": "string",
+        "description": "AI消息内容"
+      }
+    },
+    {
+      "id": "addUiMessage",
+      "title": "添加UI消息",
       "schema": {
         "type": "object",
         "properties": {
-          "role": {
-            "type": "string",
-            "description": "角色：user 或 assistant"
+          "type": {
+            "type": "string"
           },
-          "content": {
-            "type": "string",
-            "description": "消息内容"
+          "id": {
+            "type": "string"
           }
         }
       }

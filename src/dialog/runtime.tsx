@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react'
 import css from './runtime.less'
 
 interface Message {
-  role: 'user' | 'assistant'
+  role: 'user' | 'assistant' | 'ui'
   content: string
   timestamp?: number
 }
@@ -25,12 +25,30 @@ export default function ({ env, data, inputs, outputs }) {
   })
 
   // 添加单条消息
-  inputs['addMessage']((message: { role: 'user' | 'assistant'; content: string }) => {
-    const newMessage: Message = {
-      ...message,
-      timestamp: Date.now()
-    }
-    setConversation(prev => [...prev, newMessage])
+  // inputs['addMessage']((message: { role: 'user' | 'assistant'; content: string }) => {
+  //   const newMessage: Message = {
+  //     ...message,
+  //     timestamp: Date.now()
+  //   }
+  //   setConversation(prev => [...prev, newMessage])
+  // })
+
+  inputs['addUserMessage']((message) => {
+    setConversation((messages) => {
+      return [...messages, { role: "user", content: message }]
+    })
+  })
+
+  inputs['addAssistantMessage']((message) => {
+    setConversation((messages) => {
+      return [...messages, { role: "assistant", content: message }]
+    })
+  })
+
+  inputs['addUiMessage']((message) => {
+    setConversation((messages) => {
+      return [...messages, { role: "ui", content: message }]
+    })
   })
 
   // 清空对话
@@ -69,7 +87,7 @@ export default function ({ env, data, inputs, outputs }) {
               className={`${css.messageItem} ${css[message.role]}`}
               onClick={() => handleMessageClick(message, index)}
             >
-              {data.showAvatar && (
+              {data.showAvatar && message.role !== "ui" && (
                 <div className={css.avatar}>
                   {message.role === 'user' ? data.userAvatar : data.assistantAvatar}
                 </div>
@@ -97,13 +115,13 @@ export default function ({ env, data, inputs, outputs }) {
   )
 }
 
-const Content = ({ env, content: { type, content } }) => {
-  if (type === "message") {
+const Content = ({ env, content }) => {
+  if (typeof content === "string") {
     return content
   }
 
   const render = useMemo(() => {
-    const json = env.getModuleJSON(content)
+    const json = env.getModuleJSON(content.id)
     console.log("[render]", {
       content,
       json
