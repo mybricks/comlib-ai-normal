@@ -1,6 +1,6 @@
 export default {
   '@init'({ setDesc }) {
-    setDesc("未选择组件")
+
   },
   ':root': [
     {

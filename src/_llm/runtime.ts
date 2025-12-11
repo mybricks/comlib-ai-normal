@@ -1,63 +1,78 @@
 export default function ({ env, data, inputs, outputs }) {
     const next = !env.runtime.debug
     inputs["call"]((message) => {
-      debugger
+        let fullContent = "" // 用于累积完整的内容
 
-      
-      let fullContent = '' // 用于累积完整的内容
-      
-      // 将字符串message构造成消息列表
-      const messages = [
-        {
-          role: 'system',
-          content: '你是一个专业的问答助手，请根据用户的问题提供准确、有帮助的回答。'
-        },
-        {
-          role: 'user',
-          content: message
-        }
-      ]
-      
-      callLLM(messages, {
-        write: (chunk) => {
-          // 流式输出每个chunk
-          fullContent += chunk
-          outputs["chunk"](chunk)
-        },
-        complete: () => {
-          // 完成时输出完整结果
-          outputs["complete"](fullContent)
-          outputs["finish"](fullContent)
-        },
-        error: (err) => {
-          // 错误时输出错误信息
-          outputs["error"](err.message || String(err))
-        },
-        cancel: (cancelFn) => {
-          // 注册取消函数
-          // 可以通过某种方式暴露给外部调用
-        }
-      })
+
+        const cards = `
+当用户提到的问题与以下卡片相关时，你需要返回以下结构
+\`\`\`json
+{
+    "type":"ui",
+    "content:"卡片id"
+}
+\`\`\`
+
+目前能使用的卡片包括：
+
+支付宝扫码
+{
+    "type":"ui",
+    "content:"u_aGorB",
+}
+
+美团外卖进度
+{
+    "type":"ui",
+    "content:"u_FHDtI",
+}
+
+        
+        
+        `
+
+        // 将字符串message构造成消息列表
+        const messages = [
+            {
+                role: "system",
+                content:
+                    `你是一个专业的问答助手，请根据用户的问题提供准确、有帮助的回答，在必要的时候，通过推送UI卡片给与用户具体的帮助。${cards}`,
+            },
+            {
+                role: "user",
+                content: message,
+            },
+        ]
+
+        callLLM(messages, {
+            write: (chunk) => {
+                // 流式输出每个chunk
+                fullContent += chunk
+                outputs["chunk"](chunk)
+            },
+            complete: () => {
+                // 完成时输出完整结果
+                outputs["complete"](fullContent)
+                outputs["chunk"](fullContent)
+            },
+            error: (err) => {
+                // 错误时输出错误信息
+                outputs["error"](err.message || String(err))
+            },
+            cancel: (cancelFn) => {
+                // 注册取消函数
+                // 可以通过某种方式暴露给外部调用
+            },
+        })
     })
 }
 
-async function callLLM(messages, {
-      write,
-      complete,
-      error,
-      cancel
-    }) {
+async function callLLM(messages, { write, complete, error, cancel }) {
     try {
-        let model =  `google/gemini-2.5-flash`
-      
+        let model = `google/gemini-2.5-flash`
+
         let top_p = 0.4,
             temperature = 0.4
-       
-
-        // messages.push({
-        //   role:'user',
-        //   content:appendXX
-        // })
 
         const controller = new AbortController()
         const response = await fetch("https://ai.mybricks.world/stream-test", {
@@ -68,7 +83,7 @@ async function callLLM(messages, {
             },
             body: JSON.stringify({
                 messages,
-                model
+                model,
             }),
         })
 

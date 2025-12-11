@@ -14,23 +14,26 @@
     {
       "id": "call",
       "title": "调用",
-      "schema": [
-        {
-          "name": "userMessage",
-          "title": "用户消息",
-          "type": "string",
-          "description": "用户消息"
-        }
-      ]
+      "schema": {
+        "type": "string"
+      }
     }
   ],
   "outputs": [
     {
-      "id": "finish",
-      "title": "返回消息",
+      "id": "chunk",
+      "title": "消息到达",
       "schema": {
         "type": "string",
-        "description": "模型返回内容"
+        "description": "模型stream返回的内容"
+      }
+    },
+    {
+      "id": "complete",
+      "title": "消息完成",
+      "schema": {
+        "type": "string",
+        "description": "模型请求结束"
       }
     }
   ]

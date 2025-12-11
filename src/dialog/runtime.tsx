@@ -55,7 +55,7 @@ export default function ({ env, data, inputs, outputs }) {
   }
 
   return (
-    <div className={css.conversationContainer} style={{ maxHeight: data.maxHeight || '500px' }}>
+    <div className={css.conversationContainer} style={data.maxHeight ? { maxHeight: data.maxHeight } : {}}>
       <div className={css.messagesList}>
         {conversation.length === 0 ? (
           <div className={css.emptyState}>
@@ -82,7 +82,7 @@ export default function ({ env, data, inputs, outputs }) {
                     color: message.role === 'user' ? data.userTextColor : data.assistantTextColor
                   }}
                 >
-                  {message.content}
+                  <Content env={env} content={message.content}/>
                 </div>
                 {data.showTimestamp && message.timestamp && (
                   <div className={css.timestamp}>{formatTime(message.timestamp)}</div>
@@ -95,5 +95,35 @@ export default function ({ env, data, inputs, outputs }) {
       </div>
     </div>
   )
+}
+
+const Content = ({ env, content: { type, content } }) => {
+  if (type === "message") {
+    return content
+  }
+
+  const render = useMemo(() => {
+    const json = env.getModuleJSON(content)
+    console.log("[render]", {
+      content,
+      json
+    })
+    
+    return env.renderModule(json, {
+      ref(refs) {
+        if (env.runtime) {
+          json.inputs.forEach(({id}) => {
+            refs.inputs[id](undefined);
+          })
+        }
+        
+        refs.run()
+      },
+      /** 禁止主动触发IO、执行自执行计算组件 */
+      disableAutoRun: true,
+    })
+  }, [])
+
+  return render;
 }
 
