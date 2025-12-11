@@ -1,6 +1,6 @@
 export default function ({ env, data, inputs, outputs }) {
   const next = !env.runtime.debug
-  inputs['create']((nextValue) => {
+  inputs['call']((nextValue) => {
     const { sceneId, store } = nextValue
 
     if (next) {
