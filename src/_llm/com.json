@@ -22,7 +22,7 @@
   "outputs": [
     {
       "id": "chunk",
-      "title": "消息到达",
+      "title": "推送消息",
       "schema": {
         "type": "string",
         "description": "模型stream返回的内容"
@@ -30,10 +30,18 @@
     },
     {
       "id": "complete",
-      "title": "消息完成",
+      "title": "推送消息完成",
       "schema": {
         "type": "string",
         "description": "模型请求结束"
+      }
+    },
+    {
+      "id": "cmdRenderUI",
+      "title": "命令:绘制界面",
+      "schema": {
+        "type": "object",
+        "description": "执行绘制界面的命令"
       }
     }
   ]

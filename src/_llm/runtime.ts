@@ -6,7 +6,7 @@ export default function ({ env, data, inputs, outputs }) {
 
         const cards = `
 当用户提到的问题与以下卡片相关时，你需要返回以下结构
-\`\`\`json
+\`\`\`json cmd.json
 {
     "type":"ui",
     "content:"卡片id"
@@ -53,7 +53,15 @@ export default function ({ env, data, inputs, outputs }) {
             complete: () => {
                 // 完成时输出完整结果
                 outputs["complete"](fullContent)
-                outputs["chunk"](fullContent)
+  
+                const file = getCode(fullContent)
+                if(file){
+                    const content = JSON.parse(file.content)
+                    if(content.type==='ui'){
+                        outputs["cmdRenderUI"](content)
+                    }
+                }
+
             },
             error: (err) => {
                 // 错误时输出错误信息
@@ -65,6 +73,43 @@ export default function ({ env, data, inputs, outputs }) {
             },
         })
     })
+}
+
+function getCode(html) {
+    let file
+    html.replaceAll(/```([^\n]+)\n([\s\S]*?)```/g, (match, lang, code) => {
+        let codeType, fileName = lang
+        //, updateType = 'default'
+        if (lang) {
+            lang.replaceAll(/(\S+)\s+file=['"`]([^'"]+)['"`]?/g, (match, _codeType, _fileName, _x, _updateType) => {
+                codeType = _codeType
+                fileName = _fileName
+                //updateType = _updateType
+                return
+            })
+
+            let fileNameShort
+
+            if (codeType && fileName) {
+                fileNameShort = fileName.substring(0, fileName.lastIndexOf('.'))
+            } else if (fileName) {//幻觉的情况
+                fileNameShort = fileName
+            }
+
+            if (fileNameShort) {
+
+                file = {
+                    name: fileNameShort,
+                    type: codeType,
+                    content: code
+                }
+
+
+            }
+        }
+    })
+
+    return file
 }
 
 async function callLLM(messages, { write, complete, error, cancel }) {
