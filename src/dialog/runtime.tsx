@@ -1,10 +1,29 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
 import css from './runtime.less'
 
+type Role = 'user' | 'assistant' | 'ui'
 interface Message {
-  role: 'user' | 'assistant' | 'ui'
+  role: Role
   content: string
   timestamp?: number
+}
+
+const appendMessage = (params: {
+  messages: Message[],
+  role: Role,
+  message: string
+}) => {
+  const { messages, role, message } = params;
+  const lastMessage = messages[messages.length - 1];
+  if (lastMessage?.role === role) {
+    const mergedMessage = {
+      ...lastMessage,
+      content: lastMessage.content + message
+    };
+    return [...messages.slice(0, -1), mergedMessage];
+  }
+
+  return [...messages, { role, content: message }]
 }
 
 export default function ({ env, data, inputs, outputs }) {
@@ -25,7 +44,7 @@ export default function ({ env, data, inputs, outputs }) {
   })
 
   // 添加单条消息
-  // inputs['addMessage']((message: { role: 'user' | 'assistant'; content: string }) => {
+  // inputs['appendMessage']((message: { role: 'user' | 'assistant'; content: string }) => {
   //   const newMessage: Message = {
   //     ...message,
   //     timestamp: Date.now()
@@ -35,13 +54,13 @@ export default function ({ env, data, inputs, outputs }) {
 
   inputs['addUserMessage']((message) => {
     setConversation((messages) => {
-      return [...messages, { role: "user", content: message }]
+      return appendMessage({ messages, role: "user", message })
     })
   })
 
   inputs['addAssistantMessage']((message) => {
     setConversation((messages) => {
-      return [...messages, { role: "assistant", content: message }]
+      return appendMessage({ messages, role: "assistant", message })
     })
   })
 
